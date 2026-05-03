@@ -1,21 +1,27 @@
--- MAIN SCRIPT : installe tout automatiquement
+-- MAIN SCRIPT : À METTRE DANS ServerScriptService
+-- Il crée automatiquement toute l’architecture (UI + RemoteEvent + Script serveur)
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ServerScriptService = game:GetService("ServerScriptService")
 local StarterPlayerScripts = game:GetService("StarterPlayer").StarterPlayerScripts
+local ServerScriptService = game:GetService("ServerScriptService")
 
--- 1) Création du RemoteEvent si absent
-if not ReplicatedStorage:FindFirstChild("ChangeAvatarEvent") then
-    local event = Instance.new("RemoteEvent")
+---------------------------------------------------------------------
+-- 1) CRÉATION DU REMOTEEVENT
+---------------------------------------------------------------------
+local event = ReplicatedStorage:FindFirstChild("ChangeAvatarEvent")
+if not event then
+    event = Instance.new("RemoteEvent")
     event.Name = "ChangeAvatarEvent"
     event.Parent = ReplicatedStorage
 end
 
--- 2) Installation du script serveur AvatarChanger
+---------------------------------------------------------------------
+-- 2) CRÉATION DU SCRIPT SERVEUR QUI CHANGE L’AVATAR
+---------------------------------------------------------------------
 if not ServerScriptService:FindFirstChild("AvatarChanger") then
-    local scriptServer = Instance.new("Script")
-    scriptServer.Name = "AvatarChanger"
-    scriptServer.Source = [[
+    local serverScript = Instance.new("Script")
+    serverScript.Name = "AvatarChanger"
+    serverScript.Source = [[
         local Players = game:GetService("Players")
         local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
@@ -39,10 +45,12 @@ if not ServerScriptService:FindFirstChild("AvatarChanger") then
             end
         end)
     ]]
-    scriptServer.Parent = ServerScriptService
+    serverScript.Parent = ServerScriptService
 end
 
--- 3) Installation du LocalScript UI
+---------------------------------------------------------------------
+-- 3) CRÉATION DU LOCALSCRIPT QUI GÈRE L’UI
+---------------------------------------------------------------------
 if not StarterPlayerScripts:FindFirstChild("AvatarUI") then
     local localScript = Instance.new("LocalScript")
     localScript.Name = "AvatarUI"
@@ -53,6 +61,7 @@ if not StarterPlayerScripts:FindFirstChild("AvatarUI") then
         local event = ReplicatedStorage:WaitForChild("ChangeAvatarEvent")
         local LocalPlayer = Players.LocalPlayer
 
+        -- GUI
         local gui = Instance.new("ScreenGui")
         gui.Name = "AvatarChangerUI"
         gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
@@ -100,3 +109,5 @@ if not StarterPlayerScripts:FindFirstChild("AvatarUI") then
     ]]
     localScript.Parent = StarterPlayerScripts
 end
+
+print("Avatar Changer installé automatiquement.")
